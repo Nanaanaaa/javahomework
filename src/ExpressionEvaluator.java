@@ -7,9 +7,9 @@ import java.util.Map;
 
 // 双目运算符接口
 interface BinaryOperator {
-    double apply(double leftOperand, double rightOperand); // 运算的接口
+    double apply(double leftOperand, double rightOperand); // 运算的接口, 返回两个值的运算结果
 
-    int getPrecedence(); // 优先级的接口
+    int getPrecedence(); // 优先级的接口, 数字越小代表优先级越高
 
     ExpressionEvaluator.Associativity getAssociativity(); // 运算结合性的接口
 }
@@ -136,16 +136,6 @@ public class ExpressionEvaluator {
         return pred1 || pred2;
     }
 
-    // 判断字符是否为左括号
-    private static boolean isLeftParenthesis(char ch) {
-        return ch == '(';
-    }
-
-    // 判断字符是否为右括号
-    private static boolean isRightParenthesis(char ch) {
-        return ch == ')';
-    }
-
     // 将中缀表达式转换为后缀表达式
     public static List<String> toPostfix(String infixExpression) {
         List<String> postfixTokens = new ArrayList<>(); // 用于存储后缀表达式的token
@@ -153,24 +143,22 @@ public class ExpressionEvaluator {
         final int N = infixExpression.length();
 
         for (int i = 0; i < N; i++) {
-            char ch = infixExpression.charAt(i);
+            final char ch = infixExpression.charAt(i);
             if (ch == ' ') {
                 continue;
             }
             if (isDigit(ch)) { // 如果是数字，读取整个数字并添加到后缀表达式中
                 StringBuilder builder = new StringBuilder();
                 builder.append(infixExpression.charAt(i));
-                int j = i;
-                while (j + 1 < N) {
-                    final char c = infixExpression.charAt(j + 1);
+                while (i + 1 < N) {
+                    final char c = infixExpression.charAt(i + 1);
                     if (isDigit(c) || c == '.') {
                         builder.append(c);
-                        j++;
+                        i++;
                     } else {
                         break;
                     }
                 }
-                i = j;
                 postfixTokens.add(builder.toString());
             } else if (isOperator(ch)) { // 如果是运算符
                 String operator = Character.toString(ch);
@@ -197,13 +185,13 @@ public class ExpressionEvaluator {
 
                 // 将当前运算符压入栈中
                 operatorStack.push(ch);
-            } else if (isLeftParenthesis(ch)) { // 如果是左括号，将其压入栈中
+            } else if (ch == '(') { // 如果是左括号，将其压入栈中
                 operatorStack.push(ch);
-            } else if (isRightParenthesis(ch)) { // 如果是右括号，将栈中的运算符弹出并添加到后缀表达式中，直到碰到左括号为止
-                while (!operatorStack.isEmpty() && !isLeftParenthesis(operatorStack.peek())) {
+            } else if (ch == ')') { // 如果是右括号，将栈中的运算符弹出并添加到后缀表达式中，直到碰到左括号为止
+                while (!operatorStack.isEmpty() && operatorStack.peek() != '(') {
                     postfixTokens.add(Character.toString(operatorStack.pop()));
                 }
-                if (!operatorStack.isEmpty() && isLeftParenthesis(operatorStack.peek())) {
+                if (!operatorStack.isEmpty() && operatorStack.peek() == '(') {
                     operatorStack.pop(); // 弹出左括号
                 } else {
                     throw new IllegalArgumentException("Unmatched right parenthesis");
@@ -215,7 +203,7 @@ public class ExpressionEvaluator {
 
         // 将栈中的运算符弹出并添加到后缀表达式中
         while (!operatorStack.isEmpty()) {
-            if (isLeftParenthesis(operatorStack.peek())) {
+            if (operatorStack.peek() == '(') {
                 throw new IllegalArgumentException("Unmatched left parenthesis");
             }
             postfixTokens.add(Character.toString(operatorStack.pop()));
