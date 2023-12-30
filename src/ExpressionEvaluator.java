@@ -1,6 +1,13 @@
-import java.util.*;
 
 // 双目运算符接口
+
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 interface BinaryOperator {
     double apply(double leftOperand, double rightOperand); // 运算的接口
 
@@ -20,7 +27,7 @@ public class ExpressionEvaluator {
         OPERATOR_PRECEDENCE.put("/", 4);
     }
 
-    // 这是自定义的运算符
+    // 这是类的使用者可以自定义的运算符
     private static final Map<String, BinaryOperator> CUSTOM_OPERATORS = new HashMap<>();
     static {
         final double eps = 1e-6;
@@ -41,7 +48,8 @@ public class ExpressionEvaluator {
                 return Associativity.RIGHT_TO_LEFT;
             }
         });
-        // 自定义运算符: 异或
+
+        // 自定义运算符: 按位异或
         CUSTOM_OPERATORS.put("^", new BinaryOperator() {
             @Override
             public double apply(double leftOperand, double rightOperand) {
@@ -64,6 +72,52 @@ public class ExpressionEvaluator {
                 return Associativity.RIGHT_TO_LEFT;
             }
         });
+        // 自定义运算符: 按位与
+        CUSTOM_OPERATORS.put("&", new BinaryOperator() {
+            @Override
+            public double apply(double leftOperand, double rightOperand) {
+                long t1 = Math.round(leftOperand), t2 = Math.round(rightOperand);
+                double delta1 = Math.abs(t1 - leftOperand), delta2 = Math.abs(t2 - rightOperand);
+
+                if (delta1 >= eps || delta2 >= eps) {
+                    throw new UnsupportedOperationException("Unimplemented method 'apply'");
+                }
+                return t1 & t2;
+            }
+
+            @Override
+            public int getPrecedence() {
+                return 9;
+            }
+
+            @Override
+            public Associativity getAssociativity() {
+                return Associativity.RIGHT_TO_LEFT;
+            }
+        });
+        // 自定义运算符: 按位或
+        CUSTOM_OPERATORS.put("|", new BinaryOperator() {
+            @Override
+            public double apply(double leftOperand, double rightOperand) {
+                long t1 = Math.round(leftOperand), t2 = Math.round(rightOperand);
+                double delta1 = Math.abs(t1 - leftOperand), delta2 = Math.abs(t2 - rightOperand);
+
+                if (delta1 >= eps || delta2 >= eps) {
+                    throw new UnsupportedOperationException("Unimplemented method 'apply'");
+                }
+                return t1 | t2;
+            }
+
+            @Override
+            public int getPrecedence() {
+                return 11;
+            }
+
+            @Override
+            public Associativity getAssociativity() {
+                return Associativity.RIGHT_TO_LEFT;
+            }
+        });
     }
 
     // 运算符结合性
@@ -79,9 +133,9 @@ public class ExpressionEvaluator {
 
     // 判断字符是否为运算符
     private static boolean isOperator(char ch) {
-        boolean fred1 = OPERATOR_PRECEDENCE.containsKey(Character.toString(ch));
-        boolean fred2 = CUSTOM_OPERATORS.containsKey(Character.toString(ch));
-        return fred1 || fred2;
+        boolean pred1 = OPERATOR_PRECEDENCE.containsKey(Character.toString(ch));
+        boolean pred2 = CUSTOM_OPERATORS.containsKey(Character.toString(ch));
+        return pred1 || pred2;
     }
 
     // 判断字符是否为左括号
@@ -99,7 +153,7 @@ public class ExpressionEvaluator {
         List<String> postfixTokens = new ArrayList<>(); // 用于存储后缀表达式的token
         Deque<Character> operatorStack = new ArrayDeque<>(); // 用于存储运算符的栈
         final int N = infixExpression.length();
-        // 处理每个字符
+
         for (int i = 0; i < N; i++) {
             char ch = infixExpression.charAt(i);
             if (ch == ' ') {
@@ -134,9 +188,9 @@ public class ExpressionEvaluator {
                     BinaryOperator topBinaryOperator = CUSTOM_OPERATORS.get(topOperator);
                     int topPrecedence = (topBinaryOperator != null) ? topBinaryOperator.getPrecedence()
                             : OPERATOR_PRECEDENCE.get(topOperator);
-
-                    if ((associativity == Associativity.LEFT_TO_RIGHT && precedence >= topPrecedence) ||
-                            (associativity == Associativity.RIGHT_TO_LEFT && precedence > topPrecedence)) {
+                    boolean pred1 = associativity == Associativity.LEFT_TO_RIGHT && precedence >= topPrecedence;
+                    boolean pred2 = associativity == Associativity.RIGHT_TO_LEFT && precedence > topPrecedence;
+                    if (pred1 || pred2) {
                         postfixTokens.add(Character.toString(operatorStack.pop()));
                     } else {
                         break;
@@ -181,8 +235,11 @@ public class ExpressionEvaluator {
                 BinaryOperator binaryOperator = CUSTOM_OPERATORS.get(token);
                 double rightOperand = operandStack.pop();
                 double leftOperand = operandStack.pop();
-                operandStack.push((binaryOperator != null) ? binaryOperator.apply(leftOperand, rightOperand)
-                        : evaluate(leftOperand, rightOperand, token));
+                if (binaryOperator == null) {
+                    operandStack.push(evaluate(leftOperand, rightOperand, token));
+                } else {
+                    operandStack.push(binaryOperator.apply(leftOperand, rightOperand));
+                }
             } else {
                 operandStack.push(Double.parseDouble(token));
             }

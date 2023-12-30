@@ -9,11 +9,11 @@ public class ExpressionEvaluatorGUI extends JFrame {
     private final JLabel resultLabel;
 
     public ExpressionEvaluatorGUI() {
-        super("Expression Evaluator");
+        super("表达式求值运算器");
 
         // 输入框和计算按钮
         inputField = new JTextField(20);
-        JButton evaluateButton = new JButton("Evaluate");
+        JButton evaluateButton = new JButton("计算");
         evaluateButton.addActionListener(e -> evaluateExpression());
 
         // 后缀表达式区域
@@ -25,17 +25,17 @@ public class ExpressionEvaluatorGUI extends JFrame {
         resultLabel = new JLabel();
 
         // 清空按钮
-        JButton clearButton = new JButton("Clear");
+        JButton clearButton = new JButton("清空");
         clearButton.addActionListener(e -> clearFields());
 
         // 布局
         JPanel inputPane = new JPanel(new FlowLayout());
-        inputPane.add(new JLabel("Expression:"));
+        inputPane.add(new JLabel("表达式:"));
         inputPane.add(inputField);
         inputPane.add(evaluateButton);
 
         JPanel postfixPane = new JPanel(new BorderLayout());
-        postfixPane.add(new JLabel("Postfix Expression:"), BorderLayout.NORTH);
+        postfixPane.add(new JLabel("后缀表达式:"), BorderLayout.NORTH);
         postfixPane.add(scrollPane, BorderLayout.CENTER);
 
         JPanel resultPane = new JPanel(new FlowLayout());
