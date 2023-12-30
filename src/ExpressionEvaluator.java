@@ -190,7 +190,28 @@ public class ExpressionEvaluator {
 
             @Override
             public int getPrecedence() {
-                return 3;
+                return 6;
+            }
+
+            @Override
+            public Associativity getAssociativity() {
+                return Associativity.RIGHT_TO_LEFT;
+            }
+        });
+        // 自定义运算符: 整除
+        CUSTOM_OPERATORS.put("//", new BinaryOperator() {
+            @Override
+            public double apply(double leftOperand, double rightOperand) {
+                if (!isValid(leftOperand, rightOperand)) {
+                    throw new UnsupportedOperationException("Unimplemented method 'apply'");
+                }
+                long t1 = Math.round(leftOperand), t2 = Math.round(rightOperand);
+                return t1 / t2;
+            }
+
+            @Override
+            public int getPrecedence() {
+                return 4;
             }
 
             @Override
