@@ -4,9 +4,9 @@ import java.util.List;
 
 public class ExpressionEvaluatorGUI extends JFrame {
 
-    private final JTextField inputField;
-    private final JTextArea postfixArea;
-    private final JTextArea resultArea;
+    private final JTextField inputField; // 输入和计算按钮
+    private final JTextArea postfixArea; // 后缀表达式区域
+    private final JTextArea resultArea; // 计算结果区域
 
     public ExpressionEvaluatorGUI() {
         super("表达式求值运算器");
@@ -36,17 +36,21 @@ public class ExpressionEvaluatorGUI extends JFrame {
         inputPane.add(inputField);
         inputPane.add(evaluateButton);
 
+        // 后缀
         JPanel postfixPane = new JPanel(new BorderLayout());
         postfixPane.add(new JLabel("后缀表达式:"), BorderLayout.NORTH);
         postfixPane.add(scrollPane, BorderLayout.CENTER);
 
+        // 結果
         JPanel resultPane = new JPanel(new BorderLayout());
         resultPane.add(new JLabel("运算结果:"), BorderLayout.NORTH);
         resultPane.add(scrollPane2, BorderLayout.CENTER);
 
+        // 底部按鈕
         JPanel buttonPane = new JPanel(new FlowLayout());
         buttonPane.add(clearButton);
 
+        // 整体
         JPanel contentPane = new JPanel(new GridLayout(4, 1, 10, 10));
         contentPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         contentPane.add(inputPane);
@@ -60,6 +64,7 @@ public class ExpressionEvaluatorGUI extends JFrame {
         setLocationRelativeTo(null);
     }
 
+    // 输入
     private void evaluateExpression() {
         String expression = inputField.getText();
         try {
@@ -73,6 +78,7 @@ public class ExpressionEvaluatorGUI extends JFrame {
         }
     }
 
+    // 清空
     private void clearFields() {
         inputField.setText("");
         postfixArea.setText("");
