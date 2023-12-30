@@ -340,7 +340,7 @@ public class ExpressionEvaluator {
         return operandStack.pop();
     }
 
-    // 计算两个操作数之间的值
+    // 计算两个操作数之间的值(固有的加减乘除运算)
     private static double evaluate(double leftOperand, double rightOperand, String operator) {
         return switch (operator) {
             case "+" -> leftOperand + rightOperand;
