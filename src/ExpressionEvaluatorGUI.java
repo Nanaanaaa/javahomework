@@ -12,12 +12,12 @@ public class ExpressionEvaluatorGUI extends JFrame {
         super("表达式求值运算器");
 
         // 输入框和计算按钮
-        inputField = new JTextField(20);
+        inputField = new JTextField(25);
         JButton evaluateButton = new JButton("计算");
         evaluateButton.addActionListener(e -> evaluateExpression());
 
         // 后缀表达式区域
-        postfixArea = new JTextArea(5, 20);
+        postfixArea = new JTextArea(2, 25);
         postfixArea.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(postfixArea);
 

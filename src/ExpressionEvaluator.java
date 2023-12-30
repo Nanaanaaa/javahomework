@@ -28,7 +28,7 @@ public class ExpressionEvaluator {
     // 这是类的使用者可以自定义的运算符
     private static final Map<String, BinaryOperator> CUSTOM_OPERATORS = new HashMap<>();
     static {
-        final double eps = 1e-6;
+        final double eps = 1e-9;
         // 自定义运算符: 取模
         CUSTOM_OPERATORS.put("%", new BinaryOperator() {
             @Override
@@ -163,19 +163,22 @@ public class ExpressionEvaluator {
             } else if (isOperator(ch)) { // 如果是运算符
                 String operator = Character.toString(ch);
                 BinaryOperator binaryOperator = CUSTOM_OPERATORS.get(operator);
-                int precedence = (binaryOperator != null) ? binaryOperator.getPrecedence()
+                int precedence = (binaryOperator != null)
+                        ? binaryOperator.getPrecedence()
                         : OPERATOR_PRECEDENCE.get(operator);
-                Associativity associativity = (binaryOperator != null) ? binaryOperator.getAssociativity()
+                Associativity associativity = (binaryOperator != null)
+                        ? binaryOperator.getAssociativity()
                         : Associativity.LEFT_TO_RIGHT;
 
                 // 将栈中优先级高于或等于当前运算符的运算符弹出并添加到后缀表达式中
                 while (!operatorStack.isEmpty() && isOperator(operatorStack.peek())) {
                     String topOperator = Character.toString(operatorStack.peek());
                     BinaryOperator topBinaryOperator = CUSTOM_OPERATORS.get(topOperator);
-                    int topPrecedence = (topBinaryOperator != null) ? topBinaryOperator.getPrecedence()
+                    int topPrecedence = (topBinaryOperator != null)
+                            ? topBinaryOperator.getPrecedence()
                             : OPERATOR_PRECEDENCE.get(topOperator);
-                    boolean pred1 = associativity == Associativity.LEFT_TO_RIGHT && precedence >= topPrecedence;
-                    boolean pred2 = associativity == Associativity.RIGHT_TO_LEFT && precedence > topPrecedence;
+                    boolean pred1 = (associativity == Associativity.LEFT_TO_RIGHT) && (precedence >= topPrecedence);
+                    boolean pred2 = (associativity == Associativity.RIGHT_TO_LEFT) && (precedence > topPrecedence);
                     if (pred1 || pred2) {
                         postfixTokens.add(Character.toString(operatorStack.pop()));
                     } else {
