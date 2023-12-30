@@ -6,7 +6,7 @@ public class ExpressionEvaluatorGUI extends JFrame {
 
     private final JTextField inputField;
     private final JTextArea postfixArea;
-    private final JLabel resultLabel;
+    private final JTextArea resultArea;
 
     public ExpressionEvaluatorGUI() {
         super("表达式求值运算器");
@@ -21,8 +21,10 @@ public class ExpressionEvaluatorGUI extends JFrame {
         postfixArea.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(postfixArea);
 
-        // 结果标签
-        resultLabel = new JLabel();
+        // 结果区域
+        resultArea = new JTextArea(2, 25);
+        resultArea.setEditable(false);
+        JScrollPane scrollPane2 = new JScrollPane(resultArea);
 
         // 清空按钮
         JButton clearButton = new JButton("清空");
@@ -38,8 +40,9 @@ public class ExpressionEvaluatorGUI extends JFrame {
         postfixPane.add(new JLabel("后缀表达式:"), BorderLayout.NORTH);
         postfixPane.add(scrollPane, BorderLayout.CENTER);
 
-        JPanel resultPane = new JPanel(new FlowLayout());
-        resultPane.add(resultLabel);
+        JPanel resultPane = new JPanel(new BorderLayout());
+        resultPane.add(new JLabel("运算结果:"), BorderLayout.NORTH);
+        resultPane.add(scrollPane2, BorderLayout.CENTER);
 
         JPanel buttonPane = new JPanel(new FlowLayout());
         buttonPane.add(clearButton);
@@ -63,16 +66,16 @@ public class ExpressionEvaluatorGUI extends JFrame {
             List<String> postfixExpression = ExpressionEvaluator.toPostfix(expression);
             double result = ExpressionEvaluator.evaluatePostfix(postfixExpression);
             postfixArea.setText(String.join(" ", postfixExpression));
-            resultLabel.setText("Result: " + result);
+            resultArea.setText(Double.toString(result));
         } catch (Exception e) {
             postfixArea.setText("");
-            resultLabel.setText("Error: " + e.getMessage());
+            resultArea.setText("Error: " + e.getMessage());
         }
     }
 
     private void clearFields() {
         inputField.setText("");
         postfixArea.setText("");
-        resultLabel.setText("");
+        resultArea.setText("");
     }
 }

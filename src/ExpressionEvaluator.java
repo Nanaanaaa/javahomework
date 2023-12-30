@@ -152,7 +152,7 @@ public class ExpressionEvaluator {
                 builder.append(infixExpression.charAt(i));
                 while (i + 1 < N) {
                     final char c = infixExpression.charAt(i + 1);
-                    if (isDigit(c) || c == '.') {
+                    if (isDigit(c) || c == '.' || c == 'e' || c == 'E') {
                         builder.append(c);
                         i++;
                     } else {
