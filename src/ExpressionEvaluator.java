@@ -1,6 +1,3 @@
-
-// 双目运算符接口
-
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -8,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+// 双目运算符接口
 interface BinaryOperator {
     double apply(double leftOperand, double rightOperand); // 运算的接口
 
